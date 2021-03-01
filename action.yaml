@@ -1,0 +1,31 @@
+name: Remove previous app versions
+author: reviewable
+description: |-
+  Remove all versions of the app beyond the set limit.
+
+inputs:
+  project_id:
+    description: The GCP project ID. Overrides project ID set by credentials.
+    required: false
+
+  limit:
+    description: A number to set the total allowed deployed versions of your app.
+    required: true
+
+  credentials:
+    description: |-
+      Service account key to use for authentication. This should be the JSON
+      formatted private key which can be exported from the Cloud Console. The
+      value can be raw or base64-encoded.
+    required: false
+
+output:
+  versions_deleted:
+    description: Version numbers that were deleted.
+
+  total_deleted:
+    description: Number of versions deleted.
+
+runs:
+  using: node12
+  main: dist/index.js
