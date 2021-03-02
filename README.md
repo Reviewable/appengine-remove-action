@@ -26,7 +26,7 @@ and makes the number of versions and version numbers available to later build st
 ```yaml
 steps:
 - id: remove
-  uses: Reviewable/appengine-remove-action@master
+  uses: Reviewable/appengine-remove-action@v2
   with:
     limit: 5
     project_id: ${{ secrets.GCP_PROJECT_ID }}
