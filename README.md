@@ -13,9 +13,10 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 -->
+[gae]:  https://cloud.google.com/appengine
 # appengine-remove-action
 
-This action removes versions of your deployed app to [App Engine](https://cloud.google.com/appengine) that go beyond the set limit
+This action removes versions of your deployed app to [App Engine][gae] that go beyond the set limit
 and makes the number of versions and version numbers available to later build steps via outputs. This allows you to parameterize your App Engine removals.
 
 *Note:* The oldest versions that goes beyond your set limit will be deleted.
