@@ -41,8 +41,8 @@ steps:
 
 ## Prerequisites
 
-This action requires Google Cloud credentials that are authorized to deploy an
-App Engine Application. See the Authorization section below for more information.
+This action requires Google Cloud credentials that are authorized to delete an
+App Engine Application version. See the Authorization section below for more information.
 
 ## Inputs
 
@@ -68,9 +68,6 @@ permissions to access the secrets being requested.
 
 Roles needed:
 
-- Storage Admin (`roles/compute.storageAdmin`): to upload files
-- Cloud Build Editor (`cloudbuild.builds.editor`): to build the application
 - App Engine roles:
   - Admin (`roles/appengine.appAdmin`): Can manage all App Engine resources (not recommended)
-
-*Note:* An owner will be needed to create the App Engine application
+  - Deployer (`roles/appengine.deployer`): Can delete App Engine versions if it's not receiving any traffic (recommended)
