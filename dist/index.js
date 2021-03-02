@@ -1010,7 +1010,161 @@ exports.issueCommand = issueCommand;
 
 /***/ }),
 
-/***/ 108:
+/***/ 129:
+/***/ (function(module) {
+
+module.exports = require("child_process");
+
+/***/ }),
+
+/***/ 131:
+/***/ (function(__unusedmodule, exports, __webpack_require__) {
+
+"use strict";
+
+/*
+ * Copyright 2020 Google LLC
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (Object.hasOwnProperty.call(mod, k)) result[k] = mod[k];
+    result["default"] = mod;
+    return result;
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const core = __importStar(__webpack_require__(470));
+const exec = __importStar(__webpack_require__(986));
+const setupGcloud = __importStar(__webpack_require__(311));
+function run() {
+    return __awaiter(this, void 0, void 0, function* () {
+        try {
+            // Get action inputs.
+            let projectId = core.getInput('project_id');
+            const limit = Number(core.getInput('limit'));
+            const serviceAccountKey = core.getInput('credentials');
+            // Install gcloud if not already installed.
+            if (!setupGcloud.isInstalled()) {
+                const gcloudVersion = yield setupGcloud.getLatestGcloudSDKVersion();
+                yield setupGcloud.installGcloudSDK(gcloudVersion);
+            }
+            // Fail if no Project Id is provided if not already set.
+            const projectIdSet = yield setupGcloud.isProjectIdSet();
+            if (!projectIdSet && projectId === '' && serviceAccountKey === '') {
+                core.setFailed('No project Id provided.');
+            }
+            // Authenticate gcloud SDK.
+            if (serviceAccountKey) {
+                yield setupGcloud.authenticateGcloudSDK(serviceAccountKey);
+                // Set and retrieve Project Id if not provided
+                if (projectId === '') {
+                    projectId = yield setupGcloud.setProjectWithKey(serviceAccountKey);
+                }
+            }
+            const authenticated = yield setupGcloud.isAuthenticated();
+            if (!authenticated) {
+                core.setFailed('Error authenticating the Cloud SDK.');
+            }
+            const toolCommand = setupGcloud.getToolCommand();
+            // Get versions all versions
+            const appVersionCmd = [
+                'app',
+                'versions',
+                'list',
+                '--filter',
+                'traffic_split=0',
+                '--format',
+                'value(id)',
+                '--sort-by',
+                'last_deployed_time',
+            ];
+            const versions = [];
+            const stdout = (data) => {
+                versions.push(...data
+                    .toString()
+                    .split(/\r?\n|\r/g)
+                    .filter((version) => version));
+            };
+            // Get output of gcloud cmd.
+            let err = '';
+            const stderr = (data) => {
+                err += data.toString();
+            };
+            const options = {
+                listeners: {
+                    stderr,
+                    stdout,
+                },
+            };
+            // Add gcloud flags.
+            if (projectId !== '') {
+                appVersionCmd.push('--project', projectId);
+            }
+            // Run gcloud versions list cmd
+            yield exec.exec(toolCommand, appVersionCmd, options);
+            const versionsToDelete = versions.slice(0, versions.length - limit);
+            if (versionsToDelete.length) {
+                const appDeleteCmd = [
+                    'app',
+                    'versions',
+                    'delete',
+                    ...versionsToDelete,
+                    '--quiet',
+                ];
+                // Add gcloud flags.
+                if (projectId !== '') {
+                    appDeleteCmd.push('--project', projectId);
+                }
+                core.debug(`Deleting ${versionsToDelete.length}, versions: Version ${versionsToDelete.join(' ')}`);
+                // // Run gcloud cmd.
+                yield exec.exec(toolCommand, appDeleteCmd, options);
+            }
+            else {
+                core.debug('No versions to delete.');
+            }
+            core.debug(err);
+            core.setOutput('versions_deleted', versionsToDelete.join(' '));
+            core.setOutput('total_deleted', versionsToDelete.length);
+        }
+        catch (error) {
+            core.setFailed(error.message);
+        }
+    });
+}
+run();
+
+
+/***/ }),
+
+/***/ 211:
+/***/ (function(module) {
+
+module.exports = require("https");
+
+/***/ }),
+
+/***/ 311:
 /***/ (function(module, __unusedexports, __webpack_require__) {
 
 module.exports =
@@ -12798,160 +12952,6 @@ exports.exec = exec;
 /***/ })
 
 /******/ });
-
-/***/ }),
-
-/***/ 129:
-/***/ (function(module) {
-
-module.exports = require("child_process");
-
-/***/ }),
-
-/***/ 131:
-/***/ (function(__unusedmodule, exports, __webpack_require__) {
-
-"use strict";
-
-/*
- * Copyright 2020 Google LLC
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
-var __importStar = (this && this.__importStar) || function (mod) {
-    if (mod && mod.__esModule) return mod;
-    var result = {};
-    if (mod != null) for (var k in mod) if (Object.hasOwnProperty.call(mod, k)) result[k] = mod[k];
-    result["default"] = mod;
-    return result;
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-const core = __importStar(__webpack_require__(470));
-const exec = __importStar(__webpack_require__(986));
-const setupGcloud = __importStar(__webpack_require__(108));
-function run() {
-    return __awaiter(this, void 0, void 0, function* () {
-        try {
-            // Get action inputs.
-            let projectId = core.getInput('project_id');
-            const limit = Number(core.getInput('limit'));
-            const serviceAccountKey = core.getInput('credentials');
-            // Install gcloud if not already installed.
-            if (!setupGcloud.isInstalled()) {
-                const gcloudVersion = yield setupGcloud.getLatestGcloudSDKVersion();
-                yield setupGcloud.installGcloudSDK(gcloudVersion);
-            }
-            // Fail if no Project Id is provided if not already set.
-            const projectIdSet = yield setupGcloud.isProjectIdSet();
-            if (!projectIdSet && projectId === '' && serviceAccountKey === '') {
-                core.setFailed('No project Id provided.');
-            }
-            // Authenticate gcloud SDK.
-            if (serviceAccountKey) {
-                yield setupGcloud.authenticateGcloudSDK(serviceAccountKey);
-                // Set and retrieve Project Id if not provided
-                if (projectId === '') {
-                    projectId = yield setupGcloud.setProjectWithKey(serviceAccountKey);
-                }
-            }
-            const authenticated = yield setupGcloud.isAuthenticated();
-            if (!authenticated) {
-                core.setFailed('Error authenticating the Cloud SDK.');
-            }
-            const toolCommand = setupGcloud.getToolCommand();
-            // Get versions all versions
-            const appVersionCmd = [
-                'app',
-                'versions',
-                'list',
-                '--filter',
-                'traffic_split=0',
-                '--format',
-                'value(id)',
-                '--sort-by',
-                'last_deployed_time',
-            ];
-            const versions = [];
-            const stdout = (data) => {
-                versions.push(...data
-                    .toString()
-                    .split(/\r?\n|\r/g)
-                    .filter((version) => version));
-            };
-            // Get output of gcloud cmd.
-            let err = '';
-            const stderr = (data) => {
-                err += data.toString();
-            };
-            const options = {
-                listeners: {
-                    stderr,
-                    stdout,
-                },
-            };
-            // Add gcloud flags.
-            if (projectId !== '') {
-                appVersionCmd.push('--project', projectId);
-            }
-            // Run gcloud versions list cmd
-            yield exec.exec(toolCommand, appVersionCmd, options);
-            const versionsToDelete = versions.slice(0, versions.length - limit);
-            if (versionsToDelete.length) {
-                const appDeleteCmd = [
-                    'app',
-                    'versions',
-                    'delete',
-                    ...versionsToDelete,
-                    '--quiet',
-                ];
-                // Add gcloud flags.
-                if (projectId !== '') {
-                    appDeleteCmd.push('--project', projectId);
-                }
-                core.debug(`Deleting ${versionsToDelete.length}, versions: Version ${versionsToDelete.join(' ')}`);
-                // // Run gcloud cmd.
-                yield exec.exec(toolCommand, appDeleteCmd, options);
-            }
-            else {
-                core.debug('No versions to delete.');
-            }
-            core.debug(err);
-            core.setOutput('versions_deleted', versionsToDelete.join(' '));
-            core.setOutput('total_deleted', versionsToDelete.length);
-        }
-        catch (error) {
-            core.setFailed(error.message);
-        }
-    });
-}
-run();
-
-
-/***/ }),
-
-/***/ 211:
-/***/ (function(module) {
-
-module.exports = require("https");
 
 /***/ }),
 

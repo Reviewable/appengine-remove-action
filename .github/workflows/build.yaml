@@ -1,0 +1,14 @@
+name: Build appengine-remove
+on: push
+jobs:
+  build:
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          token: ${{ github.token }}
+      - uses: actions/node-setup@v2
+      - name: Install dependencies
+        run: npm install
+      - name: Build app
+        run: npm run build
+

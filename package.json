@@ -1,7 +1,7 @@
 {
-  "name": "appengine-deploy",
+  "name": "appengine-remove",
   "version": "0.1.0",
-  "description": "Github Action: Deploy to Google App Engine",
+  "description": "Github Action: Remove versions from Google App Engine",
   "main": "dist/index.js",
   "scripts": {
     "build": "npm run latest && ncc build src/main.ts",

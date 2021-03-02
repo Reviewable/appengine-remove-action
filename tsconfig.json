@@ -28,8 +28,8 @@
   },
   "references": [
     {
-      "path": "./src/setup-gcloud/setupGcloudSDK"
+      "path": "./setup-gcloud/setupGcloudSDK"
     }
   ],
-  "exclude": ["node_modules", "**/*.test.ts", "src/setup-gcloud"]
+  "exclude": ["node_modules", "**/*.test.ts", "setup-gcloud"]
 }
