@@ -56,6 +56,9 @@ App Engine Application version. See the Authorization section below for more inf
   step prior to `appengine-remove-action`, those credentials will be accessed
   by default.
 
+- `service_name:` (optional) The name of the service that you want to target. If provided, 
+  this will only remove the versions related to the service.
+
 ## Outputs
 
 - `versions_deleted`: An array of versions that were deleted.
