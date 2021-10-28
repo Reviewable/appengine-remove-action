@@ -24,6 +24,7 @@ async function run(): Promise<void> {
     let projectId = core.getInput('project_id');
     const limit = Number(core.getInput('limit'));
     const serviceAccountKey = core.getInput('credentials');
+    const serviceName = core.getInput('service_name');
 
     // Install gcloud if not already installed.
     if (!setupGcloud.isInstalled()) {
@@ -93,6 +94,10 @@ async function run(): Promise<void> {
       appVersionCmd.push('--project', projectId);
     }
 
+    if (serviceName !== '') {
+      appVersionCmd.push('--service', serviceName);
+    }
+
     // Run gcloud versions list cmd
     await exec.exec(toolCommand, appVersionCmd, options);
 
@@ -110,6 +115,10 @@ async function run(): Promise<void> {
       // Add gcloud flags.
       if (projectId !== '') {
         appDeleteCmd.push('--project', projectId);
+      }
+
+      if (serviceName !== '') {
+        appVersionCmd.push('--service', serviceName);
       }
 
       core.debug(
