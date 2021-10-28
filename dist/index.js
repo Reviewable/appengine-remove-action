@@ -1064,6 +1064,7 @@ function run() {
             let projectId = core.getInput('project_id');
             const limit = Number(core.getInput('limit'));
             const serviceAccountKey = core.getInput('credentials');
+            const serviceName = core.getInput('service_name');
             // Install gcloud if not already installed.
             if (!setupGcloud.isInstalled()) {
                 const gcloudVersion = yield setupGcloud.getLatestGcloudSDKVersion();
@@ -1121,6 +1122,9 @@ function run() {
             if (projectId !== '') {
                 appVersionCmd.push('--project', projectId);
             }
+            if (serviceName !== '') {
+                appVersionCmd.push('--service', serviceName);
+            }
             // Run gcloud versions list cmd
             yield exec.exec(toolCommand, appVersionCmd, options);
             const versionsToDelete = versions.slice(0, versions.length - limit);
@@ -1135,6 +1139,9 @@ function run() {
                 // Add gcloud flags.
                 if (projectId !== '') {
                     appDeleteCmd.push('--project', projectId);
+                }
+                if (serviceName !== '') {
+                    appVersionCmd.push('--service', serviceName);
                 }
                 core.debug(`Deleting ${versionsToDelete.length}, versions: Version ${versionsToDelete.join(' ')}`);
                 // // Run gcloud cmd.
