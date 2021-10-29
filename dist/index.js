@@ -1127,8 +1127,8 @@ function run() {
             }
             // Run gcloud versions list cmd
             yield exec.exec(toolCommand, appVersionCmd, options);
-            const versionsToDelete = versions.slice(0, versions.length - limit);
-            if (versionsToDelete.length) {
+            if (versions.length > limit) {
+                const versionsToDelete = versions.slice(0, versions.length - limit);
                 const appDeleteCmd = [
                     'app',
                     'versions',
@@ -1146,13 +1146,15 @@ function run() {
                 core.debug(`Deleting ${versionsToDelete.length}, versions: Version ${versionsToDelete.join(' ')}`);
                 // // Run gcloud cmd.
                 yield exec.exec(toolCommand, appDeleteCmd, options);
+                core.debug(err);
+                core.setOutput('versions_deleted', versionsToDelete.join(' '));
+                core.setOutput('total_deleted', versionsToDelete.length);
             }
             else {
                 core.debug('No versions to delete.');
+                core.setOutput('versions_deleted', '');
+                core.setOutput('total_deleted', '0');
             }
-            core.debug(err);
-            core.setOutput('versions_deleted', versionsToDelete.join(' '));
-            core.setOutput('total_deleted', versionsToDelete.length);
         }
         catch (error) {
             core.setFailed(error.message);
