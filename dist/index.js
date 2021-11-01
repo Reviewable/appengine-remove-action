@@ -1146,7 +1146,6 @@ function run() {
                 core.debug(`Deleting ${versionsToDelete.length}, versions: Version ${versionsToDelete.join(' ')}`);
                 // // Run gcloud cmd.
                 yield exec.exec(toolCommand, appDeleteCmd, options);
-                core.debug(err);
                 core.setOutput('versions_deleted', versionsToDelete.join(' '));
                 core.setOutput('total_deleted', versionsToDelete.length);
             }
@@ -1155,6 +1154,7 @@ function run() {
                 core.setOutput('versions_deleted', '');
                 core.setOutput('total_deleted', '0');
             }
+            core.debug(err);
         }
         catch (error) {
             core.setFailed(error.message);
