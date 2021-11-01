@@ -129,7 +129,6 @@ async function run(): Promise<void> {
       
       // // Run gcloud cmd.
       await exec.exec(toolCommand, appDeleteCmd, options);
-      core.debug(err);
       core.setOutput('versions_deleted', versionsToDelete.join(' '));
       core.setOutput('total_deleted', versionsToDelete.length);
     } else {
@@ -138,6 +137,7 @@ async function run(): Promise<void> {
       core.setOutput('total_deleted', '0');
     }
 
+    core.debug(err);
   } catch (error) {
     core.setFailed(error.message);
   }
