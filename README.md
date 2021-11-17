@@ -26,7 +26,7 @@ and makes the number of versions and version numbers available to later build st
 ```yaml
 steps:
 - id: remove
-  uses: Reviewable/appengine-remove-action@v2.1.1
+  uses: Reviewable/appengine-remove-action@v2.1.2
   with:
     limit: 5
     project_id: ${{ secrets.GCP_PROJECT_ID }}
@@ -56,7 +56,7 @@ App Engine Application version. See the Authorization section below for more inf
   step prior to `appengine-remove-action`, those credentials will be accessed
   by default.
 
-- `service_name:` (optional) The name of the service that you want to target. If provided, 
+- `service_name:` (optional) The name of the service that you want to target. If provided,
   this will only remove the versions related to the service.
 
 ## Outputs
