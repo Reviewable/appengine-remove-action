@@ -1141,7 +1141,7 @@ function run() {
                     appDeleteCmd.push('--project', projectId);
                 }
                 if (serviceName !== '') {
-                    appVersionCmd.push('--service', serviceName);
+                    appDeleteCmd.push('--service', serviceName);
                 }
                 core.debug(`Deleting ${versionsToDelete.length}, versions: Version ${versionsToDelete.join(' ')}`);
                 // // Run gcloud cmd.
