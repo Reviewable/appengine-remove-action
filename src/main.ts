@@ -103,7 +103,7 @@ async function run(): Promise<void> {
 
     if (versions.length > limit) {
       const versionsToDelete = versions.slice(0, versions.length - limit);
-  
+
       const appDeleteCmd = [
         'app',
         'versions',
@@ -111,22 +111,22 @@ async function run(): Promise<void> {
         ...versionsToDelete,
         '--quiet',
       ];
-  
+
       // Add gcloud flags.
       if (projectId !== '') {
         appDeleteCmd.push('--project', projectId);
       }
-  
+
       if (serviceName !== '') {
-        appVersionCmd.push('--service', serviceName);
+        appDeleteCmd.push('--service', serviceName);
       }
-  
+
       core.debug(
         `Deleting ${
           versionsToDelete.length
         }, versions: Version ${versionsToDelete.join(' ')}`,
       );
-      
+
       // // Run gcloud cmd.
       await exec.exec(toolCommand, appDeleteCmd, options);
       core.setOutput('versions_deleted', versionsToDelete.join(' '));
