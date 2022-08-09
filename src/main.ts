@@ -23,6 +23,7 @@ async function run(): Promise<void> {
     // Get action inputs.
     let projectId = core.getInput('project_id');
     const limit = Number(core.getInput('limit'));
+    const daysToKeep = Number(core.getInput('days_to_keep'));
     const serviceAccountKey = core.getInput('credentials');
     const serviceName = core.getInput('service_name');
 
@@ -65,6 +66,14 @@ async function run(): Promise<void> {
       '--sort-by',
       'last_deployed_time',
     ];
+
+    //Apply days_to_keep
+    if (daysToKeep && daysToKeep > 0) {
+      let dateDiff = new Date().getDate() - daysToKeep;
+      let deleteBefore = new Date(new Date().setDate(dateDiff));
+      let deleteBeforeString = deleteBefore.toISOString().split('T')[0];
+      appVersionCmd.push('--filter', `"version.createTime.date('%Y-%m-%d', Z)<'${deleteBeforeString}'"`);
+    }
 
     const versions: string[] = [];
     const stdout = (data: Buffer): void => {

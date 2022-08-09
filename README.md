@@ -51,6 +51,9 @@ App Engine Application version. See the Authorization section below for more inf
 
 - `limit`: (required) The total number of the latest deployed versions to keep.
 
+- `days_to_keep`: (optional) Versions newer than this number of days before today will not be deleted.
+  Older versions will be subject to the limit value.
+
 - `credentials`: (optional) The credentials to authorize connection to your
   project deployed to App Engine. If included the `google-github-actions/setup-gcloud@master`
   step prior to `appengine-remove-action`, those credentials will be accessed
