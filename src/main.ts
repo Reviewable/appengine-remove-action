@@ -72,7 +72,7 @@ async function run(): Promise<void> {
       let dateDiff = new Date().getDate() - daysToKeep;
       let deleteBefore = new Date(new Date().setDate(dateDiff));
       let deleteBeforeString = deleteBefore.toISOString().split('T')[0];
-      appVersionCmd.push('--filter', "version.createTime.date('%Y-%m-%d', Z)<'${deleteBeforeString}'");
+      appVersionCmd.push('--filter', `version.createTime.date('%Y-%m-%d', Z)<'${deleteBeforeString}'`);
     }
 
     const versions: string[] = [];
