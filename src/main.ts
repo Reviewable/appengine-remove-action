@@ -68,7 +68,9 @@ async function run(): Promise<void> {
     ];
 
     //Apply days_to_keep
+    core.info('days-to-keep: ' + daysToKeep);
     if (daysToKeep && daysToKeep > 0) {
+      core.info('will push filter');
       let dateDiff = new Date().getDate() - daysToKeep;
       let deleteBefore = new Date(new Date().setDate(dateDiff));
       let deleteBeforeString = deleteBefore.toISOString().split('T')[0];
