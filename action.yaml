@@ -12,7 +12,7 @@ inputs:
     description: A number to set the total allowed deployed versions of your app.
     required: true
 
-  days_to_keep:
+  apply_limit_after_days:
     description: |-
       Versions newer than this number of days before today will not be deleted.
       Older versions will be subject to the limit value.
