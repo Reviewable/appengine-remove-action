@@ -1103,9 +1103,9 @@ function run() {
             ];
             //Apply apply_limit_after_days
             if (applyLimitAfterDays && applyLimitAfterDays > 0) {
-                let dateDiff = new Date().getDate() - applyLimitAfterDays;
-                let deleteBefore = new Date(new Date().setDate(dateDiff));
-                let deleteBeforeString = deleteBefore.toISOString().split('T')[0];
+                const dateDiff = new Date().getDate() - applyLimitAfterDays;
+                const deleteBefore = new Date(new Date().setDate(dateDiff));
+                const deleteBeforeString = deleteBefore.toISOString().split('T')[0];
                 appVersionCmd.push('--filter', `version.createTime.date('%Y-%m-%d', Z)<'${deleteBeforeString}'`);
             }
             const versions = [];
