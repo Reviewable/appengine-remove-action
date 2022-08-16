@@ -12,6 +12,12 @@ inputs:
     description: A number to set the total allowed deployed versions of your app.
     required: true
 
+  apply_limit_after_days:
+    description: |-
+      Versions newer than this number of days before today will not be deleted.
+      Older versions will be subject to the limit value.
+    required: false
+
   credentials:
     description: |-
       Service account key to use for authentication. This should be the JSON

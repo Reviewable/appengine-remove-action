@@ -1063,6 +1063,7 @@ function run() {
             // Get action inputs.
             let projectId = core.getInput('project_id');
             const limit = Number(core.getInput('limit'));
+            const daysToKeep = Number(core.getInput('apply_limit_after_days'));
             const serviceAccountKey = core.getInput('credentials');
             const serviceName = core.getInput('service_name');
             // Install gcloud if not already installed.
@@ -1100,6 +1101,13 @@ function run() {
                 '--sort-by',
                 'last_deployed_time',
             ];
+            //Apply apply_limit_after_days
+            if (daysToKeep && daysToKeep > 0) {
+                let dateDiff = new Date().getDate() - daysToKeep;
+                let deleteBefore = new Date(new Date().setDate(dateDiff));
+                let deleteBeforeString = deleteBefore.toISOString().split('T')[0];
+                appVersionCmd.push('--filter', `version.createTime.date('%Y-%m-%d', Z)<'${deleteBeforeString}'`);
+            }
             const versions = [];
             const stdout = (data) => {
                 versions.push(...data
