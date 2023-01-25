@@ -15,21 +15,18 @@
  */
 {
   "compilerOptions": {
-    "target": "es6",
+    "target": "es2015",
+    "moduleResolution": "node",
     "module": "commonjs",
     "lib": [
-      "es6"
+      "ES2015"
     ],
     "outDir": "./dist",
     "rootDir": "./src",
     "strict": true,
+    "useUnknownInCatchVariables": false,
     "noImplicitAny": true,
     "esModuleInterop": true,
   },
-  "references": [
-    {
-      "path": "./setup-gcloud/setupGcloudSDK"
-    }
-  ],
-  "exclude": ["node_modules", "**/*.test.ts", "setup-gcloud"]
+  "exclude": ["node_modules"]
 }

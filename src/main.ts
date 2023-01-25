@@ -1,58 +1,69 @@
-/*
- * Copyright 2020 Google LLC
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 import * as core from '@actions/core';
 import * as exec from '@actions/exec';
-import * as setupGcloud from 'setupGcloudSDK';
+import * as toolCache from '@actions/tool-cache';
+import path from 'path';
+import {
+  authenticateGcloudSDK,
+  getLatestGcloudSDKVersion,
+  getToolCommand,
+  installGcloudSDK,
+  isAuthenticated,
+  isInstalled,
+  isProjectIdSet,
+  setProject,
+} from '@google-github-actions/setup-cloud-sdk';
 
 async function run(): Promise<void> {
   try {
     // Get action inputs.
-    let projectId = core.getInput('project_id');
+    const projectId = core.getInput('project_id');
     const limit = Number(core.getInput('limit'));
     const applyLimitAfterDays = Number(core.getInput('apply_limit_after_days'));
     const serviceAccountKey = core.getInput('credentials');
     const serviceName = core.getInput('service_name');
 
+    // Authenticate - this comes from google-github-actions/auth
+    const credFile = process.env.GOOGLE_GHA_CREDS_PATH;
+    if (credFile) {
+      await authenticateGcloudSDK(credFile);
+      core.info('Successfully authenticated');
+    } else {
+      core.warning(
+        'No authentication found for gcloud, authenticate with `google-github-actions/auth`.',
+      );
+    }
+
     // Install gcloud if not already installed.
-    if (!setupGcloud.isInstalled()) {
-      const gcloudVersion = await setupGcloud.getLatestGcloudSDKVersion();
-      await setupGcloud.installGcloudSDK(gcloudVersion);
+    const version = await getLatestGcloudSDKVersion();
+    if (!isInstalled(version)) {
+      await installGcloudSDK(version);
+    } else {
+      const toolPath = toolCache.find('gcloud', version);
+      core.addPath(path.join(toolPath, 'bin'));
     }
 
     // Fail if no Project Id is provided if not already set.
-    const projectIdSet = await setupGcloud.isProjectIdSet();
-    if (!projectIdSet && projectId === '' && serviceAccountKey === '') {
+    const projectIdSet = await isProjectIdSet();
+    if (!projectIdSet && projectId === '') {
       core.setFailed('No project Id provided.');
     }
 
     // Authenticate gcloud SDK.
     if (serviceAccountKey) {
-      await setupGcloud.authenticateGcloudSDK(serviceAccountKey);
-      // Set and retrieve Project Id if not provided
-      if (projectId === '') {
-        projectId = await setupGcloud.setProjectWithKey(serviceAccountKey);
-      }
+      await authenticateGcloudSDK(serviceAccountKey);
     }
-    const authenticated = await setupGcloud.isAuthenticated();
+    const authenticated = await isAuthenticated();
     if (!authenticated) {
       core.setFailed('Error authenticating the Cloud SDK.');
     }
 
-    const toolCommand = setupGcloud.getToolCommand();
+    // Set the project ID, if given.
+    if (projectId) {
+      await setProject(projectId);
+      core.info('Successfully set default project');
+    }
+
+    const toolCommand = getToolCommand();
 
     // Get versions all versions
     const appVersionCmd = [
