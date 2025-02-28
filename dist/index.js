@@ -73634,8 +73634,6 @@ function run() {
             // Run gcloud versions list cmd
             yield exec.exec(toolCommand, appVersionCmd, options);
             if (versions.length > limit) {
-                // Wait a couple seconds to try to avoid GAE's bogus resource conflict errors.
-                yield new Promise(r => setTimeout(r, 2000));
                 const versionsToDelete = versions.slice(0, versions.length - limit);
                 const appDeleteCmd = [
                     'app',
