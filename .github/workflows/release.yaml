@@ -1,0 +1,17 @@
+name: Tag release
+
+on:
+  push:
+    branches:
+      - release
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    uses: reviewable/actions/.github/workflows/release.yaml@master
+    with:
+      checkout_submodules: true
+      install_command: npm ci
+      build_command: npm run build

@@ -1,22 +1,21 @@
-name: Build appengine-remove
-on: push
+name: Check build
+on:
+  - push
+  - pull_request
 jobs:
-  build:
+  check-build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v6
         with:
           token: ${{ github.token }}
           submodules: 'true'
-      - uses: actions/setup-node@v2
-      - name: Install dependencies
-        run: npm install
-      - name: Build app
-        run: npm run build
-      - name: Commit & Push changes
-        uses: EndBug/add-and-commit@v7
+      - uses: actions/setup-node@v6
         with:
-          add: 'dist'
-          branch: 'master'
-          message: 'actions commit: Build ${{ github.run_number }}'
-
+          node-version: '24'
+      - name: Install dependencies
+        run: npm ci
+      - name: Build
+        run: npm run build
+      - name: Check for build changes
+        run: git diff --quiet

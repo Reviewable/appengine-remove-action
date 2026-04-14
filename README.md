@@ -25,12 +25,15 @@ and makes the number of versions and version numbers available to later build st
 
 ```yaml
 steps:
+- uses: google-github-actions/auth@v3
+  with:
+    credentials_json: ${{ secrets.GCP_CREDENTIALS }}
+
 - id: remove
-  uses: Reviewable/appengine-remove-action@v2.1.2
+  uses: Reviewable/appengine-remove-action@v4
   with:
     limit: 5
     project_id: ${{ secrets.GCP_PROJECT_ID }}
-    credentials: ${{ secrets.GCP_CREDENTIALS }}
 
 # Example of using the output
 - id: test
@@ -55,8 +58,8 @@ App Engine Application version. See the Authorization section below for more inf
   Older versions will be subject to the limit value.
 
 - `credentials`: (optional) The credentials to authorize connection to your
-  project deployed to App Engine. If included the `google-github-actions/setup-gcloud@master`
-  step prior to `appengine-remove-action`, those credentials will be accessed
+  project deployed to App Engine. If a `google-github-actions/auth@v3`
+  step runs prior to `appengine-remove-action`, those exported credentials will be accessed
   by default.
 
 - `service_name:` (optional) The name of the service that you want to target. If provided,
