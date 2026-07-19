@@ -14,10 +14,11 @@
  * limitations under the License.
  */
 {
+  "extends": "reviewable-configs/tsconfig.json",
   "compilerOptions": {
     "target": "es2015",
-    "moduleResolution": "node",
-    "module": "commonjs",
+    "module": "nodenext",
+    "moduleResolution": "nodenext",
     "lib": [
       "ES2015"
     ],
@@ -26,7 +27,7 @@
     "strict": true,
     "useUnknownInCatchVariables": false,
     "noImplicitAny": true,
-    "esModuleInterop": true,
   },
+  "include": ["src/**/*.ts"],
   "exclude": ["node_modules"]
 }

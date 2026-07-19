@@ -35,11 +35,11 @@ async function run(): Promise<void> {
 
     // Install gcloud if not already installed.
     const version = await getLatestGcloudSDKVersion();
-    if (!isInstalled(version)) {
-      await installGcloudSDK(version);
-    } else {
+    if (isInstalled(version)) {
       const toolPath = toolCache.find('gcloud', version);
       core.addPath(path.join(toolPath, 'bin'));
+    } else {
+      await installGcloudSDK(version);
     }
 
     // Fail if no Project Id is provided if not already set.
@@ -78,7 +78,7 @@ async function run(): Promise<void> {
       'last_deployed_time',
     ];
 
-    //Apply apply_limit_after_days
+    // Apply apply_limit_after_days
     if (applyLimitAfterDays && applyLimitAfterDays > 0) {
       const dateDiff = new Date().getDate() - applyLimitAfterDays;
       const deleteBefore = new Date(new Date().setDate(dateDiff));
@@ -95,7 +95,7 @@ async function run(): Promise<void> {
         ...data
           .toString()
           .split(/\r?\n|\r/g)
-          .filter((version) => version),
+          .filter(appVersion => appVersion),
       );
     };
 
@@ -166,4 +166,4 @@ async function run(): Promise<void> {
   }
 }
 
-run();
+void run();
