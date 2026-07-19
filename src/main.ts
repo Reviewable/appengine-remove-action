@@ -1,6 +1,8 @@
 import * as core from '@actions/core';
 import * as exec from '@actions/exec';
 import * as toolCache from '@actions/tool-cache';
+import {mkdtemp, writeFile} from 'fs/promises';
+import {tmpdir} from 'os';
 import path from 'path';
 import {
   authenticateGcloudSDK,
@@ -12,6 +14,20 @@ import {
   isProjectIdSet,
   setProject,
 } from '@google-github-actions/setup-cloud-sdk';
+
+async function writeCredentialsFile(credentials: string): Promise<string> {
+  let credentialJson = credentials.trim();
+  if (!credentialJson.startsWith('{')) {
+    credentialJson = Buffer.from(credentialJson, 'base64').toString('utf8');
+  }
+  JSON.parse(credentialJson);
+  core.setSecret(credentialJson);
+
+  const credentialsDir = await mkdtemp(path.join(tmpdir(), 'appengine-remove-'));
+  const credentialsFile = path.join(credentialsDir, 'credentials.json');
+  await writeFile(credentialsFile, credentialJson, {mode: 0o600});
+  return credentialsFile;
+}
 
 async function run(): Promise<void> {
   try {
@@ -50,7 +66,8 @@ async function run(): Promise<void> {
 
     // Authenticate gcloud SDK.
     if (serviceAccountKey) {
-      await authenticateGcloudSDK(serviceAccountKey);
+      core.setSecret(serviceAccountKey);
+      await authenticateGcloudSDK(await writeCredentialsFile(serviceAccountKey));
     }
     const authenticated = await isAuthenticated();
     if (!authenticated) {
