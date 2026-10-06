@@ -13,5 +13,5 @@ jobs:
     uses: reviewable/actions/.github/workflows/release.yaml@master
     with:
       checkout_submodules: true
-      install_command: npm ci
-      build_command: npm run build
+      install_command: corepack enable && yarn install --immutable
+      build_command: yarn build
