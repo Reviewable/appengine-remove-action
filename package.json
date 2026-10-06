@@ -38,6 +38,6 @@
     "prettier": "^3",
     "reviewable-configs": "Reviewable/reviewable-configs#master",
     "ts-node": "^10.9.1",
-    "typescript": "^5"
+    "typescript": "^6.0.3"
   }
 }
