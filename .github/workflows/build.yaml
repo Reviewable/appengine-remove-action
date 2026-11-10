@@ -12,9 +12,11 @@ jobs:
           submodules: 'true'
       - uses: actions/setup-node@v6
         with:
-          node-version: '24'
+          node-version: '26'
       - name: Install dependencies
-        run: corepack enable && yarn install --immutable
+        run: |
+          command -v corepack >/dev/null || npm install --global corepack@0.36.0
+          corepack enable && yarn install --immutable
       - name: Build
         run: yarn build
       - name: Check for build changes
