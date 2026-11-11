@@ -1,7 +1,7 @@
 {
   "name": "appengine-remove",
-  "version": "4.2.0",
-  "packageManager": "yarn@4.13.0",
+  "version": "4.2.1",
+  "packageManager": "yarn@4.18.1",
   "description": "Github Action: Remove versions from Google App Engine",
   "main": "dist/index.js",
   "scripts": {
@@ -23,6 +23,12 @@
   "engines": {
     "node": ">=24"
   },
+  "devEngines": {
+    "runtime": {
+      "name": "node",
+      "version": "^24.15.0 || >=26.0.0"
+    }
+  },
   "dependencies": {
     "@actions/core": "^3.0.1",
     "@actions/exec": "^3.0.0",
@@ -31,10 +37,10 @@
   },
   "devDependencies": {
     "@types/node": "^24",
-    "@vercel/ncc": "^0.44.1",
+    "@vercel/ncc": "^0.45.0",
     "eslint": "^10.7.0",
     "globals": "^17.7.0",
-    "npm-check-updates": "^22.0.0",
+    "npm-check-updates": "^23.1.1",
     "prettier": "^3",
     "reviewable-configs": "Reviewable/reviewable-configs#master",
     "ts-node": "^10.9.1",
