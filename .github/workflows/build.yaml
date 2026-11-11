@@ -2,22 +2,10 @@ name: Check build
 on:
   - push
   - pull_request
+
+permissions:
+  contents: read
+
 jobs:
   check-build:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v6
-        with:
-          token: ${{ github.token }}
-          submodules: 'true'
-      - uses: actions/setup-node@v6
-        with:
-          node-version: '26'
-      - name: Install dependencies
-        run: |
-          command -v corepack >/dev/null || npm install --global corepack@0.36.0
-          corepack enable && yarn install --immutable
-      - name: Build
-        run: yarn build
-      - name: Check for build changes
-        run: git diff --quiet
+    uses: reviewable/actions/.github/workflows/check-build-output.yaml@master
